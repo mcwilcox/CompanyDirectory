@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Company Directory</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+        <meta name="description" content="Commercial Sensitive">
+        <meta name="author" content="Matthew Wilcox">
+
+        <link rel="stylesheet" type="text/css" href="css/normalize.css">
+        <link rel="stylesheet" type="text/css" href="libs/bootstrap-5.0.0-beta1-dist/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="css/styles.css">
+        <script defer src="libs/font-awesome/all.js"></script>
+    </head>
+    <body>
+      <div id="mainView" class="container containerFullWidth">
+        <nav id="navbar" class="navbar fixed-top navbar-dark bg-dark containerFullWidth">
+          <div id="navSection1" class="">
+            <div id="navSection1a" class="">
+              <a id="navbarBrand" class="navbar-brand" href="#">
+                <div id="divCompanyDirectoryIcon" class="d-inline-block align-top">
+                  <div><i id="companyDirectoryIcon" class="far fa-address-book"></i></div>
+                </div>
+                <span id="companyDirectoryLabel1" class="companyDirectoryLabel">company</span><span id="companyDirectoryLabel2" class="companyDirectoryLabel">directory</span>
+              </a>
+            </div>
+            <div id="navSection1b" class="">  
+              <div class="btn-group btn-group-toggle" role="group" aria-label="radio toggle button group">
+                <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
+                <label id='buttonEmployeeDB' class="buttonDB btn btn-secondary buttonDBChecked" for="btnradio1" onclick='personnelViewButton();'><i class="dbButtonIcon fas fa-user"></i><span class="dbButtonText">  Personnel</span></label>
+                <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off">
+                <label id='buttonDepartmentsDB' class="buttonDB btn btn-secondary" for="btnradio2" onclick='departmentsViewButton();'><i class="dbButtonIcon fas fa-building"></i><span class="dbButtonText">  Department</span></label>
+                <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off">
+                <label id='buttonLocationsDB' class="buttonDB btn btn-secondary" for="btnradio3" onclick='locationsViewButton();'><i class="dbButtonIcon fas fa-globe-americas"></i><span class="dbButtonText">  Location</span></label>
+              </div>
+            </div>
+          </div>
+          <div id="navSection2" class="navSection"> 
+            <div id="divSearchAndNewData" class="navDiv d-flex justify-content-end">
+              <input id="searchData" class="form-control" type="text" placeholder="Search by Name, Department...">
+              <button id="buttonNewData" class="btn btn-success my-sm-0" view="" type="button" onclick=""> </button>
+            </div>
+          </div>
+        </nav>
+        <div id="navSpacer" class="container containerFullWidth"></div>
+        <div id="desktop" class="container containerFullWidth">
+          <div id="panelWindow" class="container containerFullWidth">
+            <div id="divPanelLHS"><div id="divListData" class=""><div id="divListDataRow" class="row"></div></div></div>
+          <div id="divPanelRHS">
+            <div id="divPanel" class="panel">
+              <div id="divImageAndEditDelete" class="container containerFullWidth d-flex justify-content-center align-items-end">
+                <div class="divButtonEdit"><button id="buttonEdit" class="buttonEdit containerFullWidth btn btn-primary" type="button" data-toggle="modal" data-target="#interfaceCreateEdit" onclick=""></i></button></div>
+                <div id="divBackgroundImage" class='' onclick=""></div>
+                <div class="divButtonDelete"><button id="buttonDelete" class="buttonDelete containerFullWidth btn btn-danger" type="button" data-toggle="modal" data-target="#interfaceCreateEdit" onclick=""><i class="fas fa-user-minus"></i></button></div>
+              </div>
+              <div id="panelPersonnel" class="container containerFullWidth">
+                <div class="divsPanel input-group mb-3" id="groupID">
+                  <div class="divLabelIcon input-group-prepend">
+                    <span class="spanLabelIcon input-group-text" id="labelPersonnelID"><i class="fas fa-user-tag"></i></span>
+                  </div>
+                  <input type="text" class="form-control" id="valuePersonnelID" disabled>
+                </div>
+                <div class="divsPanel input-group mb-3">
+                  <div class="divLabelIcon input-group-prepend">
+                    <span class="spanLabelIcon input-group-text" id="labelFirstAndLastName"><i class="fas fa-user"></i></span>
+                  </div>
+                  <input type="text" class="form-control" id="valueFirstName" disabled>
+                  <input type="text" class="form-control" id="valueLastName" disabled>
+                </div>
+                <div class="divsPanel input-group mb-3">
+                  <div class="divLabelIcon input-group-prepend">
+                    <span class="spanLabelIcon input-group-text" id="labelJobTitle"><i class="fas fa-briefcase"></i></span>
+                  </div>
+                  <input type="text" class="form-control" id="valueJobTitle" disabled>
+                </div>
+                <div class="divsPanel input-group mb-3">
+                  <div class="divLabelIcon input-group-prepend">
+                    <span class="spanLabelIcon input-group-text" id="labelEmail"><i class="fas fa-envelope"></i>
+                  </div>
+                  <input type="text" class="form-control" id="valueEmail" disabled>
+                </div>
+                <div class="divsPanel input-group mb-3">
+                  <div class="divLabelIcon input-group-prepend">
+                    <span class="spanLabelIcon input-group-text" id="labelDepartment"><i class="fas fa-building"></i></span>
+                  </div>
+                  <input type="text" class="form-control" id="valueDepartment" disabled>
+                </div>
+                <div class="divsPanel input-group mb-3">
+                  <div class="divLabelIcon input-group-prepend">
+                    <span class="spanLabelIcon input-group-text" id="labelLocation"><i class="fas fa-globe-americas"></i></span>
+                  </div>
+                  <input type="text" class="form-control" id="valueLocation" disabled>
+                </div>
+              </div>
+              <div id="panelDepartment" class="panel container containerFullWidth">
+                <div class="divsPanel input-group mb-3">
+                  <div class="divLabelIcon input-group-prepend">
+                    <span class="spanLabelIcon input-group-text" id="labelDepartmentID"><i class="fas fa-tag"></i></span>
+                  </div>
+                  <input type="text" class="form-control" id="valueDepartmentID" disabled>
+                </div>
+                <div class="divsPanel input-group mb-3">
+                  <div class="divLabelIcon input-group-prepend">
+                    <span class="spanLabelIcon input-group-text" id="labelDepartmentName"><i class="fas fa-tag"></i></span>
+                  </div>
+                  <input type="text" class="form-control" id="valueDepartmentName" disabled>
+                </div>
+              </div>
+              <div id="panelLocation" class="panel container containerFullWidth">
+                <div class="divsPanel input-group mb-3">
+                  <div class="divLabelIcon input-group-prepend">
+                    <span class="spanLabelIcon input-group-text" id="labelLocationID"><i class="fas fa-tag"></i></span>
+                  </div>
+                  <input type="text" class="form-control" id="valueLocationID" disabled>
+                </div>
+                <div class="divsPanel input-group mb-3">
+                  <div class="divLabelIcon input-group-prepend">
+                    <span class="spanLabelIcon input-group-text" id="labelLocationName"><i class="fas fa-tag"></i></span>
+                  </div>
+                  <input type="text" class="form-control" id="valueLocationName" disabled>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
+        <div id='mobile'>
+          <div class="accordion" id="mobileView">
+          </div>
+        </div>
+          <div class="modal fade" id="personnelCreateEditInterface" tabindex="-1" role="dialog" aria-labelledby="headerCreateEdit" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header"><h4 class="modal-title" id="headerCreateEditPersonnel"></h4></div>
+                <div class="modal-body"><div id="modalDivCreateEdit" class="container">
+                  <div class="input-group mb-3">
+                    <div class="label input-group-prepend">
+                      <span class="spanLabelIcon input-group-text" id="labelFirstAndLastName"><i class="fas fa-user"></i></span>
+                    </div>
+                    <input id='inputPersonnelFirstName' class='form-control' dataID='' type='text' placeholder="First Name">
+                    <input id='inputPersonnelLastName' class='form-control' dataID='' type='text' placeholder="Last Name">
+                  </div>
+                  <div class='input-group mb-3'>
+                    <div class='label input-group-prepend'><span class='input-group-text'><i class="fas fa-envelope"></i></span></div>
+                    <input id='inputPersonnelEmail' class='form-control' dataID='' type='text' placeholder='Email'>
+                  </div>    
+                  <div class='input-group mb-3'>
+                    <div class='label input-group-prepend'><span class='input-group-text'><i class="fas fa-briefcase"></i></span></div>
+                    <input id='inputPersonnelJobTitle' class='form-control' dataID='' type='text' placeholder='Job Title'>
+                  </div>
+                  <form><div class='form-group'><div class='input-group mb-3'> 
+                    <div class='label input-group-prepend'><label class='input-group-text' for=''><i class="fas fa-building"></i></label></div> 
+                    <select id='selectDepartment' class='custom-select form-control'></select> 
+                  </div></div></form>
+                  <form><div class='form-group'><div class='input-group mb-3'> 
+                    <div class='label input-group-prepend'><label class='input-group-text' for=''><i class="fas fa-globe-americas"></i></label></div> 
+                    <select id='selectLocation' class='custom-select form-control'></select> 
+                  </div></div></form>
+                </div></div>
+                <div id="modalFooterCreateEditPersonnel" class="modal-footer">
+                  <div class='divButtonsData container btn-group' role='group'>
+                    <button id='acceptCreateEditPersonnel' class='btn btn-outline-success' type='button' onclick=''>Accept</button>
+                    <button id='cancelCreateEditPersonnel' class='btn btn-outline-secondary' type='button' onclick=''>Cancel</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal fade" id="departmentCreateEditInterface" tabindex="-1" role="dialog" aria-labelledby="headerCreateEdit" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header"><h4 class="modal-title" id="headerCreateEditDepartment"></h4></div>
+                <div class="modal-body">
+                  <div id="modalDivCreateEdit" class="container">
+                    <div class='input-group mb-3'>
+                      <div class='label input-group-prepend'><span class='input-group-text'><i class="fas fa-building"></i></span></div>
+                      <input id='inputDepartmentName' class='form-control' dataID='' type='text' placeholder='Department Name'>
+                    </div>
+                    <div class='input-group mb-3'>
+                      <div class='label input-group-prepend'><span class='input-group-text'><i class="fas fa-building"></i></span></div>
+                      <input id='inputDepartmentAbbreviation' class='form-control' dataID='' type='text' placeholder='Abbreviation'>
+                    </div>
+                    <form><div class='form-group'><div class='input-group mb-3'> 
+                      <div class='label input-group-prepend'><label class='input-group-text' for=''><i class="fas fa-globe-americas"></i></label></div> 
+                      <select id='selectDepartmentLocation' class='custom-select form-control'></select> 
+                    </div></div></form>
+                  </div>
+                </div>
+                <div id="modalFooterCreateEditDepartment" class="modal-footer">
+                  <div class='container divButtonsData btn-group' role='group' aria-label='Basic example'>
+                    <button id='acceptCreateEditDepartment' class='btn btn-outline-success' type='button' onclick=''>Accept</button>
+                    <button id='cancelCreateEditDepartment' class='btn btn-outline-secondary' type='button' onclick=''>Cancel</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal fade" id="locationCreateEditInterface" tabindex="-1" role="dialog" aria-labelledby="headerCreateEdit" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header"><h4 class="modal-title" id="headerCreateEditLocation"></h4></div>
+                <div class="modal-body">
+                  <div id="modalDivCreateEdit" class="container">
+                    <div class='input-group mb-3'>
+                      <div class='label input-group-prepend'><span class='input-group-text'><i class="fas fa-globe-americas"></i></span></div>
+                      <input id='inputLocationName' class='form-control' dataID='' type='text' placeholder='Location Name'>
+                    </div>
+                    <div class='input-group mb-3'>
+                      <div class='label input-group-prepend'><span class='input-group-text'><i class="fas fa-globe-americas"></i></span></div>
+                      <input id='inputLocationAbbreviation' class='form-control' dataID='' type='text' placeholder='Abbreviation'>
+                    </div>
+                  </div>
+                </div>
+                <div id="modalFooterCreateEditLocation" class="modal-footer">
+                    <div class='divButtonsData container btn-group' role='group' aria-label='Basic example'>
+                      <button id='acceptCreateEditLocation' class='btn btn-outline-success' type='button' onclick=''>Accept</button>
+                      <button id='cancelCreateEditLocation' class='btn btn-outline-secondary' type='button' onclick=''>Cancel</button>
+                    </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal fade" id="interfaceConfirm" tabindex="-1" role="dialog" aria-labelledby="headerConfirm" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 id="headerConfirm" class="modal-title"></h4>
+                </div>
+                <div class="modal-body">
+                  <div id="modalContentDivConfirm" class="container">
+                  </div>
+                </div>
+                <div id="modalFooterConfirm" class="modal-footer">
+                  <div id='modalFooterDivConfirm' class='container'>
+                    <div id='modalButtonGroupConfirm' class='divButtonsData divButtonsConfirm containerFullWidth btn-group' role='group'>
+                      <div class='input-group-prepend'><div class='input-group-text'>
+                        <input id='checkboxSubmitRequest' type='checkbox' aria-label='Enable Confirm Button' onchange='checkboxConfirm(this)';>
+                      </div></div>
+                      <button id='buttonAcceptConfirm' class='btn btn-outline-danger' type='button' onclick='' disabled>Accept</button>
+                      <button id='buttonCancelCreateEdit' class='btn btn-outline-secondary' type='button' onclick=''>Cancel</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <script type="application/javascript" src="libs/jquery/jquery-2.2.3.min.js"></script>
+      <script type="application/javascript" src="libs/bootstrap-5.0.0-beta1-dist/js/bootstrap.bundle.min.js"></script>
+      <script type="application/javascript" src="js/script.js"></script>
+    </body>
+</html>

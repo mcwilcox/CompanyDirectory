@@ -1,0 +1,365 @@
+@font-face {
+  font-family: "Roboto";
+  src: url("fonts/roboto-mono/static/RobotoMono-Regular.ttf");
+}
+
+
+body {
+  font-family: Roboto, Verdana, Geneva, Tahoma, sans-serif;
+  background-color: #404040;
+  height: 100%;
+  padding: 0% 0%;
+
+  -ms-overflow-style: none;  
+  scrollbar-width: none;  
+}
+
+.containerFullWidth {
+  min-width: 100%;
+  margin: 0px;
+  padding: 0px;
+}
+
+.hidden {display: none;}
+
+#navbar {
+  background-color: #603f83 !important;
+  display: flex; 
+}
+
+#navSection1 {
+  display: flex; 
+  flex-grow: 2;
+}
+
+#navSection2 {
+  flex-grow: 1;
+  padding: 5px;
+}
+
+#navSection1a {
+  position: relative;
+  flex-grow: 1;
+  padding: 5px;
+}
+
+#navSection1b {
+  flex-grow: 1;
+  padding: 5px;
+  text-align: center;
+}
+
+.buttonDB {min-width: 150px;}
+
+#navSpacer {height: 48px;}
+
+#divCompanyDirectoryIcon {
+  font-size: 25px;
+  height: 38px;
+  width: 38px;
+  margin: 0px;
+  padding: 0px;
+  text-align: center;
+  background-color: #603f83;
+  border-radius: 15%;
+  color: white;
+  border: 2px solid white;
+}
+
+#buttonDB * {
+  display: inline-block;
+  margin: auto;
+}
+
+#searchData {
+  padding: 5px;
+  margin: 0px;
+}
+
+#buttonNewData {
+  min-width: 38px;
+  min-height: 38px;
+  margin: 0px 0px 0px 5px;
+  padding: 0px;
+  background-color: #28A745 !important;
+  border: 2px solid #DDDDDD !important;
+}
+
+#buttonNewData * {
+  display: block;
+  margin: auto;
+}
+
+#companyDirectoryLabel1 {
+  position: absolute;
+  top: -4px;
+  left: 50px;
+}
+
+#companyDirectoryLabel2 {
+  position: absolute;
+  bottom: 0px;
+  left: 60px;
+}
+
+@media only screen and (max-width : 930px) {
+  #navbar {display: inline-block;}
+  #companyDirectoryLabel {font-size: large;}
+  #navSection1b {text-align: right;}
+  #navSpacer {height: 98px;}
+  #divPanelRHS {top: 98px !important};
+}
+
+@media only screen and (max-width : 650px) {
+  #companyDirectoryLabel {font-size: medium;}
+  .dbButtonText {display: none;}
+  .buttonDB {min-width: 30px;}
+}
+
+
+#panelWindow {
+  display: flex; 
+  background-color: #DDDDDD;
+  min-height: 100vh;
+}
+
+#divPanelLHS, #divPanelRHS {
+  display: table-cell;
+  vertical-align:top;
+  border: 1px solid #BBBBBB;
+  margin: 0px;
+  padding: 10px;
+}
+
+#divPanelLHS {flex-grow: 2;}
+
+#divPanelRHS {
+  height: 100vh;
+  min-width: 475px;
+  border-width: 1px;
+  position: sticky;
+  position: -webkit-sticky;
+  top: 48px;
+}
+
+.divBackgroundImageIcon {
+  background-repeat: no-repeat;
+  background-position: center bottom;
+  background-color: #D7CEDF;
+  height: 75px;
+  width: 75px;
+  border-radius: 100%;
+  border: 3px solid #603f83;
+  margin: auto;
+  margin-bottom: 5px;
+}
+
+#divImageAndEditDelete {
+  width: 100%;
+  margin-bottom: 25px;
+}
+
+#divBackgroundImage {
+  background-size: 90% 90%;
+  background-repeat: no-repeat;
+  background-color: #D7CEDF;
+  height: 200px;
+  width: 200px;
+  border-radius: 100%;
+  border: 5px solid #603f83;
+}
+
+.personnelBackground {
+  background-image: url("../svg/user-solid.svg");
+  background-position: center bottom;
+}
+
+.departmentBackground {
+  background-image: url("../svg/building-solid.svg");
+  background-position: center bottom;
+}
+
+.locationBackground {
+  background-image: url("../svg/globe-americas-solid.svg");
+  background-position: center center;
+}
+
+.divButtonEdit > *, .divButtonDelete > * {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.divButtonEdit, .buttonEdit, .divButtonDelete, .buttonDelete {
+  height: 42px;
+  width: 42px;
+}
+
+.buttonEdit, .buttonDelete {
+  border-radius: 100%;
+  outline: none;
+  box-shadow: none;
+}
+
+.buttonEdit {
+  background-color: #BFDEFF;
+  border: 2px solid #007BFF;
+}
+
+#buttonEdit:hover, #buttonDelete:hover {
+  background-color: white;
+}
+
+.buttonDelete {
+  background-color: #F6CCD0;
+  border: 2px solid #DC3545;
+}
+
+.buttonEdit svg {
+  color: #007BFF;
+  font-size: 22px;
+}
+
+.buttonDelete svg {
+  color: #DC3545;
+  font-size: 22px;
+}
+
+.divLabelIcon, .spanLabelIcon {
+  display: inline-block;
+  width: 50px;
+}
+
+#imgDelete {color: red;}
+
+.buttonDB, .buttonDB:focus, .buttonDB:hover, .buttonDB:active {
+  font-size: medium;
+  width: 33%;
+  background-color: #606060 !important;
+  border: 2px solid #DDDDDD !important;
+  outline: none;
+  box-shadow: none;
+}
+
+.buttonDB:hover {background-color: #999999 !important;}
+
+.buttonDB:focus, .buttonDB:active {background-color: #28A745 !important;}
+
+.buttonDBChecked {background-color: #28A745 !important;}
+
+.data-slides-main {
+  width:100%;
+	height:auto;
+	border-bottom:5px #323233 solid;
+	background:#FFFFFF;
+	text-align:center;
+	border-radius:10px;
+	overflow:hidden;
+	position:relative;
+	transition:0.5s;
+	margin-bottom:28px;
+}
+
+.data-slides-main img {
+	border-radius:50%;
+	margin-bottom:20px;
+	width: 90px;
+}
+
+.data-slides-main h3 {
+	font-size:20px;
+	font-weight:700;
+}
+
+.data-slides-main p {margin-bottom: 0px;}
+
+.slideTable {
+  padding: 0px;
+  margin: 0px;
+}
+
+.slideTD {width: 33% !important;}
+
+.slideName {
+  padding: 0px;
+  margin: 0px;
+}
+
+.slideDepartmentLocation div {
+  display: inline-flex;
+  width:50%;
+}
+
+.slideInfo, .slideInfo span {
+  text-align: center;
+  flex-grow: 1;
+  margin: 0px;
+}
+
+.slideDivLabelEmail, .slideSpanLabelEmail {border-radius: 19px 0% 0% 19px !important;}
+
+.borderlessRight {border-right: 0;}
+
+.borderlessLeft {border-left: 0;}
+
+.slide-back {
+	width:100%;
+	height:auto;
+	position:absolute;
+	bottom: 5px;
+	left: 0px;
+	padding: 80px 15px 0px 15px;
+	text-align:left;
+	background:#FFFFFF;
+}
+
+.slide-front {
+	width:100%;
+	height:auto;
+	position:relative;
+	z-index:10;
+	background:#FFFFFF;
+	padding:15px;
+	top: 0px;
+	transition: all 0.5s ease;
+}
+
+.data-slides-main:hover .slide-front {
+	top:-90px;
+	transition: all 0.75s ease;
+}
+
+.data-slides-main:hover {
+	border-color:#777;
+	transition:0.5s;
+}
+
+.slideDivButtons, .slideDivButtons btn {
+  width: 100%;
+  margin-bottom: 0px;
+}
+
+.label label, .label span {
+  width: 42px;
+  text-align: center;
+}
+
+.example::-webkit-scrollbar {display: none;}
+
+.example {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.input-group-text {height: 100%;}
+
+.mobileDivButtonsEditDelete {width: 100%;}
+
+.mobileDepartmentPersonnel, .mobileLocationDepartments, .mobileLocationPersonnel {
+  resize: none;
+  overflow: hidden;
+}
+
+#mobileView {
+  background-color: white;
+}
