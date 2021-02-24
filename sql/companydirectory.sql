@@ -27,20 +27,20 @@ CREATE TABLE IF NOT EXISTS `department` (
 
 -- Dumping data for table companydirectory.department: ~12 rows (approximately)
 /*!40000 ALTER TABLE `department` DISABLE KEYS */;
-INSERT INTO `department` (`id`, `name`, `abbreviation`, `locationID`) VALUES
-	(1, 'Unspecified', 'N/A', 1),
-	(2, 'Human Resources', 'HR', 2),
-	(3, 'Sales', 'Sales', 3),
-	(4, 'Marketing', 'Marketing', 3),
-	(5, 'Legal', 'Legal', 2),
-	(6, 'Services', 'Services', 2),
-	(7, 'Research & Development', 'R&D', 4),
-	(8, 'Product Management', 'Product Mng', 4),
-	(9, 'Training', 'Training', 5),
-	(10, 'Support', 'Support', 5),
-	(11, 'Engineering', 'Eng', 6),
-	(12, 'Accounting', 'Accounting', 6),
-	(13, 'Business Development', 'BD', 4);
+INSERT INTO `department` (`id`, `name`, `locationID`) VALUES
+	(1, 'Unspecified', 1),
+	(2, 'Human Resources', 2),
+	(3, 'Sales', 3),
+	(4, 'Marketing', 3),
+	(5, 'Legal', 2),
+	(6, 'Services', 2),
+	(7, 'Research & Development', 4),
+	(8, 'Product Management', 4),
+	(9, 'Training', 5),
+	(10, 'Support', 5),
+	(11, 'Engineering', 6),
+	(12, 'Accounting', 6),
+	(13, 'Business Development', 4);
 /*!40000 ALTER TABLE `department` ENABLE KEYS */;
 
 -- Dumping structure for table companydirectory.location
@@ -53,13 +53,13 @@ CREATE TABLE IF NOT EXISTS `location` (
 
 -- Dumping data for table companydirectory.location: ~4 rows (approximately)
 /*!40000 ALTER TABLE `location` DISABLE KEYS */;
-INSERT INTO `location` (`id`, `name`, `abbreviation`) VALUES
-	(1, 'Unspecified', 'N/A'),
-	(2, 'London', 'LDN'),
-	(3, 'New York', 'NY'),
-	(4, 'Paris', 'PAR'),
-	(5, 'Munich', 'MU'),
-	(6, 'Rome', 'ROM');
+INSERT INTO `location` (`id`, `name`) VALUES
+	(1, 'Unspecified'),
+	(2, 'London'),
+	(3, 'New York'),
+	(4, 'Paris'),
+	(5, 'Munich'),
+	(6, 'Rome');
 /*!40000 ALTER TABLE `location` ENABLE KEYS */;
 
 -- Dumping structure for table companydirectory.personnel
