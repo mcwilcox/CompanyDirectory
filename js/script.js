@@ -50,7 +50,7 @@ function contentFilter() {
     });
 }
 
-async function ajaxCRUD(filenamePHP, id="na", first="na", last="na", job="na", email="na", depID="na", dep="na", depAbbrev="na", locID="na", loc="na", locAbbrev="na", filterPHP="na", filterID="na", sortByPHP1="na", sortByPHP2="na") {
+async function ajaxCRUD(filenamePHP, id="na", first="na", last="na", job="na", email="na", depID="na", dep="na", locID="na", loc="na", filterPHP="na", filterID="na", sortByPHP1="na", sortByPHP2="na") {
     return await $.ajax({
         url: "php/" + filenamePHP + ".php",
         type: 'POST',
@@ -63,10 +63,8 @@ async function ajaxCRUD(filenamePHP, id="na", first="na", last="na", job="na", e
             $email:             email,
             $departmentID:      depID,
             $departmentName:    dep,
-            $departmentAbbrev:  depAbbrev,
             $locationID:        locID,
             $locationName:      loc,
-            $locationAbbrev:    locAbbrev,
             $filterPHP:         filterPHP,
             $filterID:          filterID,
             $sortByPHP1:        sortByPHP1,
@@ -83,7 +81,8 @@ async function ajaxCRUD(filenamePHP, id="na", first="na", last="na", job="na", e
 }
 
 function pageView(db, data) {
-
+    clearRHS();
+    clearInputs();
     scrollTop();
     
     if(!mobileDevice) {
@@ -165,7 +164,7 @@ function digitsLen(databaseType, id) {
 }
 
 function personnelDetails(id) {
-    ajaxCRUD(filenamePHP.READ_PERSONNEL, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, filter.PERSONNEL, id).then(result => {
+    ajaxCRUD(filenamePHP.READ_PERSONNEL, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, filter.PERSONNEL, id).then(result => {
         const data = result["data"][0];
         const digits = digitsLen(database.PERSONNEL, data["id"]);
         $("#valuePersonnelID").val(digits);
@@ -185,11 +184,12 @@ function personnelDetails(id) {
 }
 
 function departmentDetails(id) {
-    ajaxCRUD(filenamePHP.READ_DEPARTMENT, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, filter.DEPARTMENT, id).then(result => {
+    ajaxCRUD(filenamePHP.READ_DEPARTMENT, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, filter.DEPARTMENT, id).then(result => {
         const data = result["data"][0];
         const digits = digitsLen(database.DEPARTMENT, data["id"]);
         $("#valueDepartmentID").val(digits);
         $("#valueDepartmentName").val(data["name"]);
+        $("#valueDepartmentLocation").val(data["location"]);
         $("#buttonEdit").attr("onclick", "editDepartment(" + data["id"] + ");");
         $("#buttonDelete").attr("onclick", "deleteDepartment(" + data["id"] + ");");
         $("#buttonEdit").attr("disabled", false);
@@ -198,7 +198,7 @@ function departmentDetails(id) {
 }
 
 function locationDetails(id) {
-    ajaxCRUD(filenamePHP.READ_LOCATION, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, filter.LOCATION, id).then(result => {
+    ajaxCRUD(filenamePHP.READ_LOCATION, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, filter.LOCATION, id).then(result => {
         const data = result["data"][0];
         const digits = digitsLen(database.LOCATION, data["id"]);
         $("#valueLocationID").val(digits);
@@ -214,14 +214,14 @@ function createPersonnel() {
     clearInputs();
     $("#personnelCreateEditInterface").modal("show");
     $("#headerCreateEditPersonnel").html("New Personnel");
-    ajaxCRUD(filenamePHP.READ_DEPARTMENT).then(data => populateSelectOptions("#selectDepartment", data, database.DEPARTMENT));
-    ajaxCRUD(filenamePHP.READ_LOCATION).then(data => populateSelectOptions("#selectLocation", data, database.LOCATION));
+    ajaxCRUD(filenamePHP.READ_DEPARTMENT).then(data => populateSelectOptions("#selectDepartment", data, database.DEPARTMENT, undefined, "Department"));
     $("#acceptCreateEditPersonnel").attr("onclick", "toggleConfirm('" + database.PERSONNEL + "', '" + request.CREATE + "');");
+    $('#selectDepartment').trigger('input');
 }
 
 function editPersonnel(id) {
     clearInputs();
-    ajaxCRUD(filenamePHP.READ_PERSONNEL, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, filter.PERSONNEL, id).then(result => {
+    ajaxCRUD(filenamePHP.READ_PERSONNEL, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, filter.PERSONNEL, id).then(result => {
         const info = result["data"][0];
         $("#personnelCreateEditInterface").modal("show");
         $("#headerCreateEditPersonnel").html("Edit Personnel");
@@ -229,9 +229,11 @@ function editPersonnel(id) {
         $("#inputPersonnelLastName").val(info["lastName"]);
         $("#inputPersonnelEmail").val(info["email"]);
         $("#inputPersonnelJobTitle").val(info["jobTitle"]);
-        ajaxCRUD(filenamePHP.READ_DEPARTMENT).then(data => populateSelectOptions("#selectDepartment", data, database.DEPARTMENT, info["department"]));
-        ajaxCRUD(filenamePHP.READ_LOCATION).then(data => populateSelectOptions("#selectLocation", data, database.LOCATION, info["location"]));
-        $("#acceptCreateEditPersonnel").attr("onclick", "toggleConfirm('" + database.PERSONNEL + "', '" + request.UPDATE + "', '" + id + "');");
+        ajaxCRUD(filenamePHP.READ_DEPARTMENT).then(data => {
+            populateSelectOptions("#selectDepartment", data, database.DEPARTMENT, info["department"], "Department");
+            $("#acceptCreateEditPersonnel").attr("onclick", "toggleConfirm('" + database.PERSONNEL + "', '" + request.UPDATE + "', '" + id + "');");
+            $('#personnelValidate').validator('validate');
+        });
     });
 }
 
@@ -243,20 +245,24 @@ function createDepartment() {
     clearInputs();
     $("#departmentCreateEditInterface").modal("show");
     $("#headerCreateEditDepartment").html("New Department");
-    ajaxCRUD(filenamePHP.READ_LOCATION).then(data => populateSelectOptions("#selectDepartmentLocation", data, database.LOCATION));
+    ajaxCRUD(filenamePHP.READ_LOCATION).then(data => populateSelectOptions("#selectDepartmentLocation", data, database.LOCATION, undefined, "Location"));
     $("#acceptCreateEditDepartment").attr("onclick", "toggleConfirm('" + database.DEPARTMENT + "', '" + request.CREATE + "');");
+    $('#selectDepartmentLocation').trigger('input');
 }
 
 function editDepartment(id) {
+    $('#acceptCreateEditPersonnel').removeAttr("disabled");
     clearInputs();
-    ajaxCRUD(filenamePHP.READ_DEPARTMENT, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, filter.DEPARTMENT, id).then(result => {
+    ajaxCRUD(filenamePHP.READ_DEPARTMENT, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, filter.DEPARTMENT, id).then(result => {
         const info = result["data"][0];
         $("#departmentCreateEditInterface").modal("show");
         $("#headerCreateEditDepartment").html("Edit Department");
         $("#inputDepartmentName").val(info["name"]);
-        $("#inputDepartmentAbbreviation").val(info["departmentAbbreviation"]);
-        ajaxCRUD(filenamePHP.READ_LOCATION).then(data => populateSelectOptions("#selectDepartmentLocation", data, database.LOCATION, info["location"]));
-        $("#acceptCreateEditDepartment").attr("onclick", "toggleConfirm('" + database.DEPARTMENT + "', '" + request.UPDATE + "', '" + id + "');");
+        ajaxCRUD(filenamePHP.READ_LOCATION).then(data => {
+            populateSelectOptions("#selectDepartmentLocation", data, database.LOCATION, info["location"], "Location");
+            $("#acceptCreateEditDepartment").attr("onclick", "toggleConfirm('" + database.DEPARTMENT + "', '" + request.UPDATE + "', '" + id + "');");
+            $('#departmentValidate').validator('validate');
+        });
     });
 }
 
@@ -269,17 +275,18 @@ function createLocation() {
     $("#locationCreateEditInterface").modal("show");
     $("#headerCreateEditLocation").html("New Location");
     $("#acceptCreateEditLocation").attr("onclick", "toggleConfirm('" + database.LOCATION + "', '" + request.CREATE + "');");
+    $("#silentValidate").trigger("input");
 }
 
 function editLocation(id) {
     clearInputs();
-    ajaxCRUD(filenamePHP.READ_LOCATION, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, filter.LOCATION, id).then(result => {
+    ajaxCRUD(filenamePHP.READ_LOCATION, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, filter.LOCATION, id).then(result => {
         const info = result["data"][0];
         $("#locationCreateEditInterface").modal("show");
         $("#headerCreateLocation").html("Edit Location");
         $("#inputLocationName").val(info["name"]);
-        $("#inputLocationAbbreviation").val(info["locationAbbreviation"]);
         $("#acceptCreateEditLocation").attr("onclick", "toggleConfirm('" + database.LOCATION + "', '" + request.UPDATE + "', '" + id + "');");
+        $('#locationValidate').validator('validate');
     });
 }
 
@@ -288,17 +295,26 @@ function deleteLocation(id) {
 }
 
 function clearInputs() {
+    $("#inputPersonnelFirstName").val("silent");
+    $("#inputPersonnelLastName").val("silent");
+    $("#inputPersonnelEmail").val("silent@gmail");
+    $("#inputPersonnelJobTitle").val("silent");
+    $("#inputDepartmentName").val("silent");
+    $("#inputLocationName").val("silent");
+
+    $('#inputPersonnelFirstName').trigger('input');
+    $('#inputPersonnelLastName').trigger('input');
+    $('#inputPersonnelEmail').trigger('input');
+    $('#inputPersonnelJobTitle').trigger('input');
+    $('#inputDepartmentName').trigger('input');
+    $('#inputLocationName').trigger('input');
+
     $("#inputPersonnelFirstName").val("");
     $("#inputPersonnelLastName").val("");
     $("#inputPersonnelEmail").val("");
     $("#inputPersonnelJobTitle").val("");
     $("#inputDepartmentName").val("");
-    $("#inputDepartmentAbbreviation").val("");
     $("#inputLocationName").val("");
-    $("#inputLocationAbbreviation").val("");
-    $("#selectDepartment").val(1);
-    $("#selectLocation").val(1);
-    $("#selectDepartmentLocation").val(1);
 }
 
 function clearRHS() {
@@ -316,14 +332,20 @@ function clearRHS() {
 }
 
 function toggleConfirm(databaseType, requestType, id="na") {
+
     $("#checkboxSubmitRequest").attr("disabled", false)
     $("#checkboxSubmitRequest").attr("checked", false);
-    let flagPreventDelete = false;
+    $("#buttonAcceptConfirm").attr("disabled", true);
+    $("#buttonAcceptConfirm").attr("class", "btn btn-outline-danger");
+    
+
+    let flagPrevent = false;
     let warnings = affectedPersonnel = affectedDepartments = "";
     const message = ("<span>Are you certain you want to " + requestType.toLowerCase() +  " the proposed " + databaseType + "?</span>");
 
     $("#headerConfirm").html("Confirm " + requestType);
     $("#modalContentDivConfirm").empty();
+    
     $("#buttonAcceptConfirm").attr("onclick", "acceptRequest('" + databaseType + "', '" + requestType + "', '" + id + "');");
 
     if(requestType == request.DESTROY) {$("#interfaceConfirm").modal("show");}
@@ -331,32 +353,37 @@ function toggleConfirm(databaseType, requestType, id="na") {
 
     switch(databaseType) {
         case database.PERSONNEL:
-            if(requestType == request.CREATE || requestType == request.UPDATE) {
 
+            if(requestType == request.CREATE || requestType == request.UPDATE) {
                 modalSwapTransition("personnelCreateEditInterface", "interfaceConfirm");
                 $("#buttonCancelCreateEdit").attr("onclick", "modalSwapTransition('interfaceConfirm', 'personnelCreateEditInterface');");
 
-                const selectedDepartmentID = $("#selectDepartment").val();
-                const selectedLocationID = $("#selectLocation").val();
-                ajaxCRUD(filenamePHP.READ_DEPARTMENT, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, filter.LOCATION, selectedLocationID).then(locationDepartments => {
-                    let flagDepartmentAtLocation = false;
-                    for(let i = 0; i < locationDepartments["data"].length; i++) {
-                        if(selectedDepartmentID == locationDepartments["data"][i]["id"]) {flagDepartmentAtLocation = true; break;}
-                    }
-                    if(flagDepartmentAtLocation == false) {
-                        warnings = warnings + "<br><br><span>The selected Department does not current exist at the selected Location.</span><br><br>";
-                        warnings = warnings + "<span>A new data entry for the Department must also be created by continuing.</span><br><br>";
-                    }   
-                });
-                
             } else if (requestType == request.DESTROY) {
                 warnings = warnings + "<br><br><span><strong>Warning:</strong> This deletion can not be undone</span>";
+                $("#modalContentDivConfirm").append(message);
+                $("#modalContentDivConfirm").append(warnings);
             }
-            $("#modalContentDivConfirm").append(message);
-            $("#modalContentDivConfirm").append(warnings);
+
+            if(requestType == request.CREATE) {
+                ajaxCRUD(filenamePHP.READ_PERSONNEL).then(personnelDetails => {
+                    personnelDetails["data"].forEach(element => {
+                        if (
+                            element["firstName"] == $("#inputPersonnelFirstName").val() &&
+                            element["lastName"] == $("#inputPersonnelLastName").val() &&
+                            element["email"] == $("#inputPersonnelEmail").val()                       
+                        ) {
+                            warnings = "<br><br><span><strong>Warning:</strong> This Personnel already exists with an identical full name and email address.</span>";
+                            flagPrevent = true;
+                        }
+                    })
+                    $("#modalContentDivConfirm").append(message);
+                    $("#modalContentDivConfirm").append(warnings);
+                    flagPrevent ? $("#checkboxSubmitRequest").attr("disabled", "true"): "";
+                });
+            } 
+
 
         break;
-
         case database.DEPARTMENT:
 
             if(requestType == request.CREATE || requestType == request.UPDATE) {
@@ -364,8 +391,22 @@ function toggleConfirm(databaseType, requestType, id="na") {
                 $("#buttonCancelCreateEdit").attr("onclick", "modalSwapTransition('interfaceConfirm', 'departmentCreateEditInterface');");
             }
 
-            if (requestType == request.UPDATE) {
-                ajaxCRUD(filenamePHP.READ_PERSONNEL, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, filter.DEPARTMENT, id).then(personnelData => {
+            if(requestType == request.CREATE) {
+                ajaxCRUD(filenamePHP.READ_DEPARTMENT).then(departmentDetails => {
+                    departmentDetails["data"].forEach(element => {
+                        if (element["name"] == $("#inputDepartmentName").val()) {
+                            warnings = "<br><br><span><strong>Warning:</strong> Department Name already exists. Please review the pre-existing Department or consider another Department Name.</span>";
+                            flagPrevent = true;
+                        }
+                    })
+                    $("#modalContentDivConfirm").append(message);
+                    $("#modalContentDivConfirm").append(warnings);
+                    flagPrevent ? $("#checkboxSubmitRequest").attr("disabled", "true"): "";
+                });
+                
+
+            } else if (requestType == request.UPDATE) {
+                ajaxCRUD(filenamePHP.READ_PERSONNEL, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, filter.DEPARTMENT, id).then(personnelData => {
                     affectedPersonnel = personnelData['data'].length;
                     personnelData['data'].length > 0 ? warnings = warnings + "<br><br><span><strong>Warning:</strong> There are " + affectedPersonnel + " Employee instances that reference this " + databaseType + ". These will be affected." : "" + "<br><br><span>The above changes cannot be undone once accepted.</span>";
                     $("#modalContentDivConfirm").append(message);
@@ -373,16 +414,16 @@ function toggleConfirm(databaseType, requestType, id="na") {
                 });
 
             } else if(requestType == request.DESTROY) {
-                ajaxCRUD(filenamePHP.READ_PERSONNEL, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, filter.DEPARTMENT, id).then(personnelData => {
+                ajaxCRUD(filenamePHP.READ_PERSONNEL, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, filter.DEPARTMENT, id).then(personnelData => {
                 if(personnelData['data'].length > 0) {
                     affectedPersonnel = personnelData['data'].length;
-                    flagPreventDelete = true;
+                    flagPrevent = true;
                     warnings = warnings + "<br><br><span><strong>Warning:</strong> There are " + affectedPersonnel + " Employee instances that reference this " + databaseType + ".";
                     warnings = warnings + "<br><br><span>Deletion has been disabled to maintain database integrity.</span>";
                 }
                 $("#modalContentDivConfirm").append(message);
                 $("#modalContentDivConfirm").append(warnings);
-                flagPreventDelete ? $("#checkboxSubmitRequest").attr("disabled", "true"): "";
+                flagPrevent ? $("#checkboxSubmitRequest").attr("disabled", "true"): "";
                 });
             }
 
@@ -395,50 +436,65 @@ function toggleConfirm(databaseType, requestType, id="na") {
                 $("#buttonCancelCreateEdit").attr("onclick", "modalSwapTransition('interfaceConfirm', 'locationCreateEditInterface');");
             }
 
-            ajaxCRUD(filenamePHP.READ_PERSONNEL, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, filter.LOCATION, id).then(personnelData => {
-            ajaxCRUD(filenamePHP.READ_DEPARTMENT, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, filter.LOCATION, id).then(departmentsData => {
-                
-                affectedPersonnel = personnelData['data'].length;
-                affectedDepartments = departmentsData['data'].length;
+            if(requestType == request.CREATE) {
+                ajaxCRUD(filenamePHP.READ_LOCATION).then(locationDetails => {
+                    locationDetails["data"].forEach(element => {
+                        if (element["name"] == $("#inputLocationName").val()) {
+                            warnings = "<br><br><span><strong>Warning:</strong> Location Name already exists. Please review the pre-existing Location or consider another Location Name.</span>";
+                            flagPrevent = true;
+                        }
+                    })
+                    $("#modalContentDivConfirm").append(message);
+                    $("#modalContentDivConfirm").append(warnings);
+                    flagPrevent ? $("#checkboxSubmitRequest").attr("disabled", "true"): "";
+                });
+            } 
 
-                if(requestType == request.UPDATE) {
-                    affectedPersonnel > 0 ? warnings = warnings + "<br><br><span><strong>Warning:</strong> There are " + affectedPersonnel + " Employee instances that reference this " + databaseType + ". These will be affected." : "";
-                    affectedDepartments > 0 ? warnings = warnings + "<br><br><span><strong>Warning:</strong> There are " + affectedDepartments + " Department instances that reference this " + databaseType + ". These will be affected.": "";
-                    affectedPersonnel > 0 || affectedDepartments > 0 ? warnings = warnings + "<br><br><span>The above changes cannot be undone once accepted.</span>" : "";
-
-                } else if (requestType == request.DESTROY) {
-
-                    affectedPersonnel > 0 ? warnings = warnings + "<br><br><span><strong>Warning:</strong> There are " + affectedPersonnel + " Employee instances that reference this " + databaseType + ".</span>" : "";
-                    affectedDepartments > 0 ? warnings = warnings + "<br><br><span><strong>Warning:</strong> There are " + affectedDepartments + " Department instances that reference this " + databaseType + ".</span>" : "";
+            if(requestType == request.UPDATE || requestType == request.DESTROY) {
+                ajaxCRUD(filenamePHP.READ_PERSONNEL, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, filter.LOCATION, id).then(personnelData => {
+                ajaxCRUD(filenamePHP.READ_DEPARTMENT, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, filter.LOCATION, id).then(departmentsData => {
                     
-                    if(affectedPersonnel > 0 || affectedDepartments > 0) {
+                    affectedPersonnel = personnelData['data'].length;
+                    affectedDepartments = departmentsData['data'].length;
 
-                        flagPreventDelete = true;
-                        warnings = warnings + "<br><br><span>Deletion has been disabled to maintain database integrity.</span>"
+                    if(requestType == request.UPDATE) {
+                        affectedPersonnel > 0 ? warnings = warnings + "<br><br><span><strong>Warning:</strong> There are " + affectedPersonnel + " Employee instances that reference this " + databaseType + ". These will be affected." : "";
+                        affectedDepartments > 0 ? warnings = warnings + "<br><br><span><strong>Warning:</strong> There are " + affectedDepartments + " Department instances that reference this " + databaseType + ". These will be affected.": "";
+                        affectedPersonnel > 0 || affectedDepartments > 0 ? warnings = warnings + "<br><br><span>The above changes cannot be undone once accepted.</span>" : "";
+
+                    } else if (requestType == request.DESTROY) {
+                        affectedPersonnel > 0 ? warnings = warnings + "<br><br><span><strong>Warning:</strong> There are " + affectedPersonnel + " Employee instances that reference this " + databaseType + ".</span>" : "";
+                        affectedDepartments > 0 ? warnings = warnings + "<br><br><span><strong>Warning:</strong> There are " + affectedDepartments + " Department instances that reference this " + databaseType + ".</span>" : "";
+                        
+                        if(affectedPersonnel > 0 || affectedDepartments > 0) {
+                            flagPrevent = true;
+                            warnings = warnings + "<br><br><span>Deletion has been disabled to maintain database integrity.</span>"
+                        }
                     }
-                }
-                $("#modalContentDivConfirm").append(message);
-                $("#modalContentDivConfirm").append(warnings);
-                flagPreventDelete ? $("#checkboxSubmitRequest").attr("disabled", "true"): "";
-            });});
+                    $("#modalContentDivConfirm").append(message);
+                    $("#modalContentDivConfirm").append(warnings);
+                    flagPrevent ? $("#checkboxSubmitRequest").attr("disabled", "true"): "";
+                });});
+            }
         break;
     }
 }
 
-function populateSelectOptions(selectID, data, database, preselected = "Unspecified") {
+function populateSelectOptions(selectID, data, database, preselected = "na", placeholder = "") {
     $(selectID).empty();
     let prev = next = selected = "";
+    $(selectID).append("<option id='selectPlaceholder' value='' selected disabled hidden>" + placeholder + "</option>")
     data["data"].forEach(element => {
         selected = element['name'] == preselected ? "selected" : "";
         next = element["name"];
         next != prev ? $(selectID).append("<option id='option" + database + element["id"] + "'value='" + element["id"] + "' " + selected + ">" + element["name"] + "</option>"): "";
         prev = next;
     });
+    
 }
 
-function acceptRequest(databaseType, requestType, id) {
-    
-    let filename = firstName = lastName = jobTitle = email = departmentID = departmentName = departmentAbbrev = locationID = locationName = locationAbbrev = filterDB = filterID = sortBy1 = sortBy2 = undefined;
+function acceptRequest(databaseType, requestType, id="na") {
+    let filename = firstName = lastName = jobTitle = email = departmentID = departmentName = locationID = locationName = filterDB = filterID = sortBy1 = sortBy2 = undefined;
     let refreshType = "";
 
     if(requestType == request.CREATE || requestType == request.UPDATE) {
@@ -448,33 +504,27 @@ function acceptRequest(databaseType, requestType, id) {
             case database.PERSONNEL:
                 refreshType = database.PERSONNEL;
                 filename = filenamePHP.CREATE_PERSONNEL;
-                if(requestType == request.UPDATE) {id = id;}
-                filename = filenamePHP.UPDATE_PERSONNEL;
+                if(requestType == request.UPDATE) {filename = filenamePHP.UPDATE_PERSONNEL;}
                 firstName = $("#inputPersonnelFirstName").val();
                 lastName = $("#inputPersonnelLastName").val();
                 jobTitle = $("#inputPersonnelJobTitle").val();
                 email = $("#inputPersonnelEmail").val();
                 departmentID = $("#selectDepartment").val();
-                locationID = $("#selectLocation").val();      
             break;
 
             case database.DEPARTMENT:
                 refreshType = database.DEPARTMENT;
                 filename = filenamePHP.CREATE_DEPARTMENT;
-                if(requestType == request.UPDATE) {departmentID = id;}
-                filename = filenamePHP.UPDATE_DEPARTMENT;
+                if(requestType == request.UPDATE) {filename = filenamePHP.UPDATE_DEPARTMENT; departmentID = id;}
                 departmentName = $("#inputDepartmentName").val();
-                departmentAbbrev = $("#inputDepartmentAbbreviation").val();
                 locationID = $("#selectDepartmentLocation").val();
             break;
 
             case database.LOCATION:
                 refreshType = database.LOCATION;
-                filename = CREATE_LOCATION;
-                if(requestType == request.UPDATE) {locationID = id;}
-                filename = UPDATE_LOCATION;
+                filename = filenamePHP.CREATE_LOCATION;
+                if(requestType == request.UPDATE) {filename = filenamePHP.UPDATE_LOCATION; locationID = id;}
                 locationName = $("#inputLocationName").val();
-                locationID = $("#inputLocationAbbreviation").val();
             break;
         }
 
@@ -486,7 +536,7 @@ function acceptRequest(databaseType, requestType, id) {
 
     }
     
-    ajaxCRUD(filename, id, firstName, lastName, jobTitle, email, departmentID, departmentName, departmentAbbrev, locationID, locationName, locationAbbrev, filterDB, filterID, sortBy1, sortBy2)
+    ajaxCRUD(filename, id, firstName, lastName, jobTitle, email, departmentID, departmentName, locationID, locationName, filterDB, filterID, sortBy1, sortBy2)
     .then(refresh(refreshType));
     $("#interfaceConfirm").modal("hide");
     scrollTop();
@@ -531,23 +581,28 @@ function slidePersonnel(data) {
     $("#divListDataRow").empty();
     data["data"].forEach(element => list = list +
         "<div id='slidePersonnel" + element["id"] + "' class='slide col-sm-12 col-md-12 col-lg-6 col-xl-4'>" + 
-                "<div class='data-slides-main'>" +
-                    "<div class='slide-front'>" +
-                        "<div class='divBackgroundImageIcon personnelBackground'></div>" +
-                        "<h3 class='slideName'>" + element["firstName"] + " " + element["lastName"] + "</h3>" +
-                        "<div id='slideJob' class='slideInfo'><span>" + element["jobTitle"] + "</span></div>" +
-                        "<div class='slideDepartmentLocation container containerFullWidth'><div id='slideJob' class='slideInfo'><span>" + element["dep"] + "</span></div><div id='slideJob' class='slideInfo'><span>" + element["location"] + "</span></div></div>" + 
-                    "</div>" +
-                    "<div class='slide-back'><div class='slideEmail input-group mb-2' id='slideEmail'><div class='slideDivLabelEmail input-group-prepend'>" +
-                        "<span class='slideSpanLabelEmail borderlessRight input-group-text' id='slideSpanLabelEmail'><i class='fas fa-envelope'></i></span>" +
-                    "</div><input type='text' class='slideInputEmail borderlessLeft form-control' value=' " + element["email"] + " ' disabled>" +
+            "<div class='data-slides-main'>" +
+                "<div class='slide-front'>" +
+                    "<div class='divBackgroundImageIcon personnelBackground'></div>" +
+                    "<h3 class='slideName'>" + element["firstName"] + " " + element["lastName"] + "</h3>" +
+                    "<div id='slideJob' class='slideInfo'><span>" + element["jobTitle"] + "</span></div>" +
+                    "<div class='slideDepartmentLocation container containerFullWidth'><div id='slidePersonnelDepartment' class='slideInfo'><span>" + element["department"] + "</span></div><div id='slidePersonnelLocation' class='slideInfo'><span>" + element["location"] + "</span></div></div>" + 
                 "</div>" +
-            "<div id='slideDivButtons' class='slideDivButtons btn-group' role='group' aria-label='database-buttons'>" +
-                "<button class='btn btn-outline-success' type='button' data-toggle='modal' data-target='#interfaceCreateEdit' onclick='personnelDetails(" + element["id"] + ");'><i class='far fa-eye'></i></i></button>" +
-                "<button class='btn btn-outline-primary' type='button' data-toggle='modal' data-target='#interfaceCreateEdit' onclick='editPersonnel(" + element["id"] + ");'><i class='fas fa-user-edit'></i></button>" +
-                "<button class='btn btn-outline-danger' type='button' data-toggle='modal' data-target='#interfaceCreateEdit' onclick='deletePersonnel(" + element["id"] + ");'><i class='fas fa-user-minus'></i></button>" +
+                "<div class='slide-back'>" +
+                    "<div class='slideEmail input-group mb-2' id='slideEmail'>" + 
+                        "<div class='slideDivLabelEmail input-group-prepend'>" +
+                            "<span class='slideSpanLabelEmail borderlessRight input-group-text' id='slideSpanLabelEmail'><i class='fas fa-envelope'></i></span>" +
+                        "</div>" +
+                        "<input type='text' class='slideInputEmail borderlessLeft form-control' value=' " + element["email"] + " ' disabled>" +
+                    "</div>" +
+                    "<div id='slideDivButtons' class='slideDivButtons btn-group' role='group' aria-label='database-buttons'>" +
+                        "<button class='btn btn-outline-success' type='button' data-toggle='modal' data-target='#interfaceCreateEdit' onclick='personnelDetails(" + element["id"] + ");'><i class='far fa-eye'></i></i></button>" +
+                        "<button class='btn btn-outline-primary' type='button' data-toggle='modal' data-target='#interfaceCreateEdit' onclick='editPersonnel(" + element["id"] + ");'><i class='fas fa-user-edit'></i></button>" +
+                        "<button class='btn btn-outline-danger' type='button' data-toggle='modal' data-target='#interfaceCreateEdit' onclick='deletePersonnel(" + element["id"] + ");'><i class='fas fa-user-minus'></i></button>" +
+                    "</div>" +
+                "</div>" +
             "</div>" +
-        "</div></div></div>"
+        "</div>"
     );
     $("#divListDataRow").append(list);
 }
@@ -562,14 +617,24 @@ function slideDepartment(data) {
                     "<div class='divBackgroundImageIcon departmentBackground'></div>" +
                     "<h3 class='slideDepartment'>" + element["name"] + "</h3>" +
                 "</div>" +
-                "<div class='slide-back'><div id='slideDivButtons' class='slideDivButtons btn-group' role='group' aria-label='database-buttons'>" +
-                    "<button class='btn btn-outline-success' type='button' data-toggle='modal' data-target='#interfaceCreateEdit' onclick='departmentDetails(" + element["id"] + ");'><i class='far fa-eye'></i></button>" +
-                    "<button class='btn btn-outline-primary' type='button' data-toggle='modal' data-target='#interfaceCreateEdit' onclick='editDepartment(" + element["id"] + ");'><i class='fas fa-pencil-alt'></i></button>" +
-                    "<button class='btn btn-outline-danger' type='button' data-toggle='modal' data-target='#interfaceCreateEdit' onclick='deleteDepartment(" + element["id"] + ");'><i class='fas fa-trash-alt'></i></button>" +
-                "</div></div>" +
+                "<div class='slide-back'>" + 
+
+                    "<div class='slideEmail input-group mb-2' id='slideEmail'>" + 
+                        "<div class='slideDivLabelEmail input-group-prepend'>" +
+                            "<span class='slideSpanLabelEmail borderlessRight input-group-text' id='slideSpanLabelEmail'><i class='fas fa-globe-americas'></i></span>" +
+                        "</div>" +
+                        "<input type='text' class='slideInputEmail borderlessLeft form-control' value=' " + element["location"] + " ' disabled>" +
+                    "</div>" +
+
+                    "<div id='slideDivButtons' class='slideDivButtons btn-group' role='group' aria-label='database-buttons'>" +
+                        "<button class='btn btn-outline-success' type='button' data-toggle='modal' data-target='#interfaceCreateEdit' onclick='departmentDetails(" + element["id"] + ");'><i class='far fa-eye'></i></button>" +
+                        "<button class='btn btn-outline-primary' type='button' data-toggle='modal' data-target='#interfaceCreateEdit' onclick='editDepartment(" + element["id"] + ");'><i class='fas fa-pencil-alt'></i></button>" +
+                        "<button class='btn btn-outline-danger' type='button' data-toggle='modal' data-target='#interfaceCreateEdit' onclick='deleteDepartment(" + element["id"] + ");'><i class='fas fa-trash-alt'></i></button>" +
+                    "</div>" + 
+                "</div>" +
             "</div>" +
-        "</div>" +
-    "</div>");
+        "</div>"
+    );
     $("#divListDataRow").append(list);
 }
 
@@ -603,10 +668,10 @@ function mobilePersonnel(data) {
         list = list + (
             "<div class='accordion-item' filterTerms='" + element["firstName"] + " " + element["lastName"] + " " + element["department"] + " " + element["location"] + "'>" +
                 "<h2 class='accordion-header' id=mobileView" + i + "'>" +
-                "<button class='accordion-button collapsed' type='button' data-bs-toggle='collapse' data-bs-target='#collapse" + i + "' aria-expanded='false' aria-controls='collapse" + i + "'>" +
+                "<button class='accordion-button collapsed' type='button' data-bs-toggle='collapse' data-bs-target='#collapse" + i + "' aria-expanded='false' aria-controls='collapse" + i + "'><span class='accordianSpan'>" +
                     digits + " " + element["firstName"] + " " + element["lastName"] +
                 "</button>" +
-                "</h2>" +
+                "</span></h2>" +
                 "<div id='collapse" + i + "' class='accordion-collapse collapse' aria-labelledby='heading" + i + "' data-bs-parent='#mobileView'>" +
                     "<div class='accordion-body'>" +
 
@@ -659,12 +724,19 @@ function mobileDepartment(data) {
         list = list + (
             "<div class='accordion-item' filterTerms='" + element["name"] + " " + element["location"] + "'>" +
                 "<h2 class='accordion-header' id=mobileView" + i + "'>" +
-                "<button class='accordion-button collapsed' type='button' data-bs-toggle='collapse' data-bs-target='#collapse" + i + "' aria-expanded='false' aria-controls='collapse" + i + "'>" +
-                    digits + " " + element["name"] + " (" + element["location"] + ")" +
-                "</button>" +
+                "<button class='accordion-button collapsed' type='button' data-bs-toggle='collapse' data-bs-target='#collapse" + i + "' aria-expanded='false' aria-controls='collapse" + i + "'><span class='accordianSpan'>" +
+                    digits + " " + element["name"] +
+                "</span></button>" +
                 "</h2>" +
                 "<div id='collapse" + i + "' class='accordion-collapse collapse' aria-labelledby='heading" + i + "' data-bs-parent='#mobileView'>" +
                     "<div class='accordion-body'>" +
+
+                        "<div class='input-group mb-3' id='groupID'>" +
+                        "<div class='input-group-prepend'>" +
+                        "<span class='input-group-text' id='mobileDepartmentLocationLabel'><i class='mobileIcon fas fa-globe-americas'></i></span>" +
+                        "</div>" +
+                            "<input type='text' class='form-control mobileDepartmentLocationValue' disabled value='" + element["location"]  + "'>" +
+                        "</div>" +
 
                         "<div class='input-group'>" +
                         "<div class='input-group-prepend'>" +
@@ -688,7 +760,6 @@ function mobileDepartment(data) {
     for(let j = 1; j <= data["data"].length; j++) {linkedItems(j, database.PERSONNEL, filenamePHP.READ_PERSONNEL, filter.DEPARTMENT, "lastName", "mobileDepartmentPersonnel");}
 }
 
-
 function mobileLocation(data) {
     let list = digits = i = "";
     $("#mobileView").empty();
@@ -698,9 +769,9 @@ function mobileLocation(data) {
         list = list + (
             "<div class='accordion-item' filterTerms='" + element["name"] + ">" +
                 "<h2 class='accordion-header' id=mobileView" + i + "'>" +
-                "<button class='accordion-button collapsed' type='button' data-bs-toggle='collapse' data-bs-target='#collapse" + i + "' aria-expanded='false' aria-controls='collapse" + i + "'>" +
+                "<button class='accordion-button collapsed' type='button' data-bs-toggle='collapse' data-bs-target='#collapse" + i + "' aria-expanded='false' aria-controls='collapse" + i + "'><span class='accordianSpan'>" +
                     digits + " " + element["name"] +
-                "</button>" +
+                "</span></button>" +
                 "</h2>" +
                 "<div id='collapse" + i + "' class='accordion-collapse collapse' aria-labelledby='heading" + i + "' data-bs-parent='#mobileView'>" +
                     "<div class='accordion-body'>" +
@@ -734,11 +805,10 @@ function mobileLocation(data) {
     for(let j = 1; j <= data["data"].length; j++) {linkedItems(j, database.PERSONNEL, filenamePHP.READ_PERSONNEL, filter.LOCATION,  "lastName", "mobileLocationPersonnel");}
 }
 
-
 function linkedItems(id, databaseType, filename, filterType, orderOn, htmlID) {
     let list = label = "";
     let i = 0;
-    ajaxCRUD(filename, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, filterType, id, orderOn).then(data => {
+    ajaxCRUD(filename, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, filterType, id, orderOn).then(data => {
         data["data"].forEach(element => {
             list = list + digitsLen(databaseType, element["id"]) + " " + (databaseType == database.PERSONNEL ? element["firstName"] + " " + element["lastName"] : element["name"]) + "\n";
             i = i + 1;
@@ -762,3 +832,12 @@ function modalButtons() {
     $("#cancelCreateEditDepartment").attr("onclick", "$('#departmentCreateEditInterface').modal('hide');");
     $("#cancelCreateEditLocation").attr("onclick", "$('#locationCreateEditInterface').modal('hide');");
 }
+
+jQuery('form[data-toggle="validator"] select').on('change', function(event) {
+    event.preventDefault();
+    jQuery(this).find('option[disabled]').remove();
+});
+
+$("form").submit(function(e) {
+    e.preventDefault();
+});
