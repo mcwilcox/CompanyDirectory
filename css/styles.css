@@ -10,6 +10,8 @@ body {
   height: 100%;
   padding: 0% 0%;
 
+
+
   -ms-overflow-style: none;  
   scrollbar-width: none;  
 }
@@ -296,7 +298,9 @@ body {
   margin: 0px;
 }
 
-.slideDivLabelEmail, .slideSpanLabelEmail {border-radius: 19px 0% 0% 19px !important;}
+.slideDivLabelEmail, .slideSpanLabelEmail {
+  border-radius: 19px 0% 0% 19px !important;
+}
 
 .borderlessRight {border-right: 0;}
 
@@ -362,4 +366,38 @@ body {
 
 #mobileView {
   background-color: white;
+}
+
+select {
+  -webkit-appearance: menulist-button;
+  color: black;
+}
+
+select:invalid {
+  color: gray;
+}
+
+#slidePersonnelDepartment, #slidePersonnelLocation {
+  max-width: 49%;
+}
+
+.slideName, .slideDepartment, .slideLocation, .slideInfo span {
+  max-width: 100%;
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.accordianSpan {
+  max-width: 90%;
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#silentValidate {
+  visibility: hidden;
+  max-height: 0%;
 }
