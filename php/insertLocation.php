@@ -19,7 +19,6 @@
 	}	
 
 	$name = $_POST['$locationName'];
-	$abbreviation = $_POST['$locationAbbrev'];
 
 	$query = "SELECT * FROM location WHERE name = ?";
 
@@ -46,10 +45,10 @@
 
 	if(count($existingEntry) == 0) {
 
-		$query = "INSERT INTO location (name, abbreviation) VALUES (?, ?)";
+		$query = "INSERT INTO location (name) VALUES (?)";
 
 		$stmt = $conn->prepare($query);
-		$stmt->bind_param("ss", $name, $abbreviation);
+		$stmt->bind_param("s", $name);
 		$stmt->execute();
 	}
 

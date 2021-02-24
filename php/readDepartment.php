@@ -34,7 +34,7 @@
 	}
 	
 	$query = "
-		SELECT d.id AS id, d.name AS name, d.abbreviation AS departmentAbbreviation, l.id AS locationID, l.name AS location, l.abbreviation AS locationAbbreviation FROM department
+		SELECT d.id AS id, d.name AS name, l.id AS locationID, l.name AS location FROM department
 		d LEFT JOIN location l ON (l.id = d.locationID)" .
 		$where . 
 		$orderBy

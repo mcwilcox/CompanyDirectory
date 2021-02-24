@@ -1,5 +1,6 @@
 <?php
 	$executionStartTime = microtime(true);
+
 	include("config.php");
 	include("zfunctions.php");
 	header('Content-Type: application/json; charset=UTF-8');
@@ -19,7 +20,6 @@
 	}
 
 	$name = $_POST['$departmentName'];
-	$abbreviation = $_POST['$departmentAbbrev'];
 	$locationID = $_POST['$locationID'];
 
 	$stmt = $conn->prepare("SELECT * FROM department WHERE name = ? AND locationID = ?");
@@ -45,8 +45,8 @@
 
 	if(count($existingEntry) == 0) {
 
-		$stmt = $conn->prepare("INSERT INTO department (name, abbreviation, locationID) VALUES(?, ?, ?)");
-		$stmt->bind_param("sss", $name, $abbreviation, $locationID);
+		$stmt = $conn->prepare("INSERT INTO department (name, locationID) VALUES(?, ?)");
+		$stmt->bind_param("ss", $name, $locationID);
 		$stmt->execute();
 	}
 

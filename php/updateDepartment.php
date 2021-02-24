@@ -20,7 +20,6 @@
 
 	$id = $_POST['$departmentID'];
 	$name = $_POST['$departmentName'];
-	$abbreviation = $_POST['$departmentAbbrev'];
 	$locationID = $_POST['$locationID'];
 	
 	$stmt = $conn->prepare("SELECT * FROM department WHERE name = ? AND locationID = ?");
@@ -45,9 +44,8 @@
 	}
 
 	if(count($existingEntry) == 0) {
-
-		$stmt = $conn->prepare("UPDATE department SET name = ?, abbreviation = ?, locationID = ? WHERE id = ?");
-		$stmt->bind_param("ssss", $name, $abbreviation, $locationID, $id);
+		$stmt = $conn->prepare("UPDATE department SET name = ?, locationID = ? WHERE id = ?");
+		$stmt->bind_param("sss", $name, $locationID, $id);
 		$stmt->execute();
 	}
 
@@ -55,7 +53,7 @@
 	$output['status']['name'] = "ok";
 	$output['status']['description'] = "success";
 	$output['status']['returnedIn'] = (microtime(true) - $executionStartTime) / 1000 . " ms";
-	$output['data'] = [$name, $abbreviation, $locationID, $id];
+	$output['data'] = [$name, $locationID, $id];
 
 	mysqli_close($conn);
 	echo json_encode($output); 

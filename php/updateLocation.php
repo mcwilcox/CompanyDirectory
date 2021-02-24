@@ -1,7 +1,4 @@
 <?php
-	ini_set('display_errors', 'On');
-	error_reporting(E_ALL);
-
 	$executionStartTime = microtime(true);
 	include("config.php");
 	include("zfunctions.php");
@@ -23,7 +20,6 @@
 
 	$id = $_POST['$locationID'];
 	$name = $_POST['$locationName'];
-	$abbreviation = $_POST['$locationAbbrev'];
 
 	$stmt = $conn->prepare("SELECT * FROM location WHERE name = ?");
 	$stmt->bind_param("s", $name);
@@ -47,9 +43,8 @@
 	}
 
 	if(count($existingEntry) == 0) {
-
-		$stmt = $conn->prepare("UPDATE location SET name = ?, abbreviation = ? WHERE id = ?");
-		$stmt->bind_param("sss", $name, $abbreviation, $id);
+		$stmt = $conn->prepare("UPDATE location SET name = ? WHERE id = ?");
+		$stmt->bind_param("ss", $name, $id);
 		$stmt->execute();
 	}
 

@@ -1,7 +1,5 @@
 <?php
 	$executionStartTime = microtime(true);
-	ini_set('display_errors', 'On');
-	error_reporting(E_ALL);
 	include("config.php");
 	include("zfunctions.php");
 	header("Content-Type: application/json; charset=UTF-8");
@@ -36,7 +34,7 @@
 		$where = "WHERE " . $filterType . ".id = " . $filterID;
 	}
 
-	$query1 = "SELECT p.id, p.lastName, p.firstName, p.jobTitle, p.email, d.id AS departmentID, d.name AS department, d.abbreviation AS dep, l.id AS locationID, l.name AS location, l.abbreviation AS loc FROM personnel";
+	$query1 = "SELECT p.id, p.lastName, p.firstName, p.jobTitle, p.email, d.id AS departmentID, d.name AS department, l.id AS locationID, l.name AS location FROM personnel";
 	$query2 = "p LEFT JOIN department d ON (d.id = p.departmentID) LEFT JOIN location l ON (l.id = d.locationID)" . $where . $orderBy;
 	$query  = $query1 . " " . $query2;	
 
@@ -53,8 +51,8 @@
 		echo json_encode($output); 
 		exit;
 	}
-   
-   	$data = [];
+
+	$data = [];
 
 	while ($row = fetchAssocStatement($stmt)) {
 		array_push($data, $row);

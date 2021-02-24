@@ -32,7 +32,7 @@
 		$where = "WHERE id = " . $filterID;
 	}
 
-	$query = "SELECT id, name, abbreviation AS locationAbbreviation FROM location " .	$where . $orderBy;
+	$query = "SELECT id, name FROM location " .	$where . $orderBy;
 
 	$stmt = $conn->prepare($query);
 	if($where != "") {$stmt->bind_param("ss", $filterDataType, $filterDataID);}
